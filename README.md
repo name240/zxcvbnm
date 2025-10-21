@@ -5,123 +5,189 @@
   <title>Public Notepad - M.SaimMAJOKA</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #eef2f3;
-      padding: 20px;
-      text-align: center;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 0;
     }
-    textarea {
-      width: 90%;
-      height: 200px;
-      padding: 10px;
-      font-size: 16px;
-      margin-top: 10px;
-      resize: none;
+
+    header {
+      background-color: #007BFF;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .buttons {
-      margin-top: 15px;
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
     }
-    button, input[type="file"] {
-      margin: 5px;
-      padding: 10px 15px;
-      font-size: 15px;
+
+    nav button {
+      background-color: white;
+      color: #007BFF;
+      border: none;
+      padding: 8px 14px;
+      margin-left: 10px;
+      font-weight: bold;
+      border-radius: 4px;
       cursor: pointer;
     }
-    .uploaded-texts {
-      margin-top: 30px;
-      text-align: left;
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
+
+    .container {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
     }
-    .uploaded-texts h3 {
+
+    textarea {
+      width: 100%;
+      height: 250px;
+      padding: 12px;
+      font-size: 16px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      resize: none;
+    }
+
+    .buttons {
+      margin-top: 15px;
       text-align: center;
     }
-    .text-box {
-      background: #fff;
-      padding: 10px;
+
+    .buttons button, .buttons input[type="file"] {
+      margin: 6px;
+      padding: 10px 18px;
+      font-size: 16px;
+      border: none;
+      background-color: #007BFF;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .buttons button:hover {
+      background-color: #0056b3;
+    }
+
+    .public-texts {
+      margin-top: 30px;
+    }
+
+    .public-entry {
+      background: white;
+      padding: 12px;
       margin-bottom: 10px;
-      border-left: 5px solid #007bff;
+      border-left: 5px solid #007BFF;
+      border-radius: 4px;
       white-space: pre-wrap;
     }
+
     footer {
-      margin-top: 30px;
+      text-align: center;
+      padding: 20px;
       font-weight: bold;
-      color: #444;
+      background-color: #f8f9fa;
+      color: #555;
     }
+
+    section {
+      display: none;
+    }
+
+    section.active {
+      display: block;
+    }
+
   </style>
 </head>
 <body>
 
-  <h1>🌐 Public Notepad</h1>
-  <p>Write, Upload, Share & View Public Text</p>
+  <header>
+    <h1>🌐 Public Notepad</h1>
+    <nav>
+      <button onclick="showSection('notepadSection')">📝 Notepad</button>
+      <button onclick="showSection('publicSection')">🌍 Public Texts</button>
+    </nav>
+  </header>
 
-  <textarea id="notepad" placeholder="Start typing or upload a file..."></textarea>
+  <!-- Section 1: Notepad -->
+  <section id="notepadSection" class="active container">
+    <h2>📝 Write, Upload, Download & Share</h2>
+    <textarea id="notepad" placeholder="Type your notes here..."></textarea>
 
-  <div class="buttons">
-    <input type="file" id="fileInput" accept=".txt">
-    <button onclick="downloadText()">Download</button>
-    <button onclick="copyText()">Copy</button>
-    <button onclick="clearText()">Clear</button>
-    <button onclick="uploadText()">Upload to Public Board</button>
-  </div>
+    <div class="buttons">
+      <input type="file" id="fileInput" accept=".txt">
+      <button onclick="downloadText()">Download</button>
+      <button onclick="copyText()">Copy</button>
+      <button onclick="clearText()">Clear</button>
+      <button onclick="uploadText()">Upload to Public</button>
+    </div>
+  </section>
 
-  <div class="uploaded-texts">
-    <h3>🌍 Public Uploaded Texts</h3>
-    <div id="publicTexts"></div>
-  </div>
+  <!-- Section 2: Public Texts -->
+  <section id="publicSection" class="container">
+    <h2>🌍 Shared Public Notes</h2>
+    <div id="publicTexts" class="public-texts">
+      <p>Loading public texts...</p>
+    </div>
+  </section>
 
   <footer>
     Created by: <strong>M.SaimMAJOKA</strong>
   </footer>
 
-  <!-- Firebase SDKs -->
+  <!-- Firebase Scripts -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <script>
-    // ✅ Firebase Configuration
+    // 🔧 Replace with your Firebase config
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
       databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
       projectId: "YOUR_PROJECT_ID",
       storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "SENDER_ID",
-      appId: "APP_ID"
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
     };
 
-    // ✅ Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // ✅ Upload Text to Firebase
+    // 📤 Upload text to Firebase
     function uploadText() {
-      const text = document.getElementById("notepad").value.trim();
+      const text = document.getElementById('notepad').value.trim();
       if (text.length === 0) {
-        alert("Please enter some text before uploading.");
+        alert("Please enter some text to upload.");
         return;
       }
-      const newRef = db.ref("publicTexts").push();
-      newRef.set({
+
+      const entry = {
         text: text,
         timestamp: Date.now()
-      });
-      document.getElementById("notepad").value = "";
-      alert("Uploaded successfully!");
+      };
+
+      db.ref("publicTexts").push(entry);
+      document.getElementById('notepad').value = '';
+      alert("Text uploaded successfully!");
     }
 
-    // ✅ Display all uploaded public texts
+    // 📥 Load public texts
     function loadPublicTexts() {
       const container = document.getElementById("publicTexts");
       db.ref("publicTexts").orderByChild("timestamp").limitToLast(100).on("value", (snapshot) => {
-        container.innerHTML = ""; // clear
+        container.innerHTML = '';
         const data = snapshot.val();
         if (data) {
-          const entries = Object.values(data).reverse(); // latest first
+          const entries = Object.values(data).reverse();
           entries.forEach(entry => {
             const div = document.createElement("div");
-            div.className = "text-box";
+            div.className = "public-entry";
             div.textContent = entry.text;
             container.appendChild(div);
           });
@@ -131,7 +197,7 @@
       });
     }
 
-    // ✅ Download Text
+    // 📄 Download text
     function downloadText() {
       const text = document.getElementById("notepad").value;
       const blob = new Blob([text], { type: "text/plain" });
@@ -141,20 +207,20 @@
       link.click();
     }
 
-    // ✅ Copy Text
+    // 📋 Copy text
     function copyText() {
       const textarea = document.getElementById("notepad");
       textarea.select();
       document.execCommand("copy");
-      alert("Text copied!");
+      alert("Text copied to clipboard!");
     }
 
-    // ✅ Clear Text
+    // 🧹 Clear notepad
     function clearText() {
       document.getElementById("notepad").value = "";
     }
 
-    // ✅ Upload File (.txt)
+    // 📂 Load file into notepad
     document.getElementById("fileInput").addEventListener("change", function (e) {
       const file = e.target.files[0];
       if (file && file.type === "text/plain") {
@@ -168,9 +234,23 @@
       }
     });
 
-    // Load public texts on page load
-    window.onload = loadPublicTexts;
-  </script>
+    // 🌐 Page navigation
+    function showSection(id) {
+      document.querySelectorAll('section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(id).classList.add('active');
 
+      if (id === 'publicSection') {
+        loadPublicTexts();
+      }
+    }
+
+    // Auto-load public texts if already on that section
+    if (document.getElementById('publicSection').classList.contains('active')) {
+      loadPublicTexts();
+    }
+
+  </script>
 </body>
 </html>
