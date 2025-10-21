@@ -4,41 +4,120 @@
 <head>
   <meta charset="UTF-8">
   <title>WIERTE - Simple Text Pad</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    :root {
+      --bg-color: #f0f4ff;
+      --primary-color: #4b6cb7;
+      --secondary-color: #182848;
+      --text-color: #333;
+      --button-bg: #4b6cb7;
+      --button-hover: #3a539b;
+      --button-text: #fff;
+    }
+
     body {
-      font-family: sans-serif;
-      background: #f4f4f4;
-      padding: 20px;
-      max-width: 800px;
-      margin: auto;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
     }
-    h1 {
+
+    header {
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      width: 100%;
+      padding: 20px 0;
       text-align: center;
-      color: #333;
+      color: white;
     }
+
+    h1 {
+      margin: 0;
+      font-size: 2em;
+      letter-spacing: 1px;
+    }
+
+    main {
+      padding: 20px;
+      width: 100%;
+      max-width: 800px;
+      flex-grow: 1;
+    }
+
     textarea {
       width: 100%;
       height: 400px;
-      padding: 10px;
+      padding: 15px;
       font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
       box-sizing: border-box;
       resize: vertical;
+      background: #fff;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
+
+    .buttons {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
     button {
-      margin-top: 10px;
-      padding: 10px 15px;
-      font-size: 14px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      background-color: var(--button-bg);
+      color: var(--button-text);
       cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: var(--button-hover);
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 14px;
+      color: #666;
+      background: #e4e9f2;
+      width: 100%;
+    }
+
+    @media (max-width: 600px) {
+      textarea {
+        height: 300px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>📝 WIERTE - Text Pad</h1>
-  <textarea id="note" placeholder="Write or paste your text here..."></textarea>
-  <br>
-  <button onclick="downloadNote()">💾 Download Text</button>
-  <button onclick="clearNote()">🗑️ Clear</button>
-  <button onclick="copyNote()">📋 Copy</button>
+
+  <header>
+    <h1>📝 WIERTE - Simple Text Pad</h1>
+  </header>
+
+  <main>
+    <textarea id="note" placeholder="Write or paste your text here..."></textarea>
+    <div class="buttons">
+      <button onclick="downloadNote()">💾 Download</button>
+      <button onclick="copyNote()">📋 Copy</button>
+      <button onclick="clearNote()">🗑️ Clear</button>
+    </div>
+  </main>
+
+  <footer>
+    Created by: <strong>M. Saim Majoka</strong>
+  </footer>
 
   <script>
     const textarea = document.getElementById('note');
@@ -63,18 +142,20 @@
       link.click();
     }
 
+    function copyNote() {
+      textarea.select();
+      document.execCommand('copy');
+      alert('Text copied to clipboard!');
+    }
+
     function clearNote() {
       if (confirm("Are you sure you want to clear the note?")) {
         textarea.value = '';
         localStorage.removeItem('wierte_note');
       }
     }
-
-    function copyNote() {
-      textarea.select();
-      document.execCommand('copy');
-      alert('Text copied to clipboard!');
-    }
   </script>
+
 </body>
 </html>
+
