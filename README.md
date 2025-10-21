@@ -1,161 +1,102 @@
-# zxcvbnm
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>WIERTE - Simple Text Pad</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Notepad - M.SaimMAJOKA</title>
   <style>
-    :root {
-      --bg-color: #f0f4ff;
-      --primary-color: #4b6cb7;
-      --secondary-color: #182848;
-      --text-color: #333;
-      --button-bg: #4b6cb7;
-      --button-hover: #3a539b;
-      --button-text: #fff;
-    }
-
     body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: var(--bg-color);
-      color: var(--text-color);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    header {
-      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-      width: 100%;
-      padding: 20px 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
       text-align: center;
-      color: white;
     }
 
     h1 {
-      margin: 0;
-      font-size: 2em;
-      letter-spacing: 1px;
-    }
-
-    main {
-      padding: 20px;
-      width: 100%;
-      max-width: 800px;
-      flex-grow: 1;
+      color: #333;
     }
 
     textarea {
-      width: 100%;
+      width: 90%;
       height: 400px;
-      padding: 15px;
+      padding: 10px;
       font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-sizing: border-box;
-      resize: vertical;
-      background: #fff;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      resize: none;
+      margin-top: 20px;
     }
 
     .buttons {
-      margin-top: 15px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+      margin-top: 20px;
     }
 
-    button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      background-color: var(--button-bg);
-      color: var(--button-text);
+    button, input[type="file"] {
+      padding: 10px 15px;
+      margin: 5px;
+      font-size: 16px;
       cursor: pointer;
-      font-size: 14px;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background-color: var(--button-hover);
     }
 
     footer {
-      text-align: center;
-      padding: 15px;
-      font-size: 14px;
-      color: #666;
-      background: #e4e9f2;
-      width: 100%;
-    }
-
-    @media (max-width: 600px) {
-      textarea {
-        height: 300px;
-      }
+      margin-top: 30px;
+      color: #555;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>📝 WIERTE - Simple Text Pad</h1>
-  </header>
+  <h1>Online Notepad</h1>
+  <p>Write, Upload, Download & Copy Text</p>
 
-  <main>
-    <textarea id="note" placeholder="Write or paste your text here..."></textarea>
-    <div class="buttons">
-      <button onclick="downloadNote()">💾 Download</button>
-      <button onclick="copyNote()">📋 Copy</button>
-      <button onclick="clearNote()">🗑️ Clear</button>
-    </div>
-  </main>
+  <textarea id="notepad" placeholder="Start typing here..."></textarea>
+
+  <div class="buttons">
+    <input type="file" id="fileInput" accept=".txt">
+    <button onclick="downloadText()">Download Text</button>
+    <button onclick="copyText()">Copy to Clipboard</button>
+    <button onclick="clearText()">Clear Notepad</button>
+  </div>
 
   <footer>
-    Created by: <strong>M. Saim Majoka</strong>
+    <p>Created by: <strong>M.SaimMAJOKA</strong></p>
   </footer>
 
   <script>
-    const textarea = document.getElementById('note');
-
-    // Load saved note
-    window.onload = () => {
-      const saved = localStorage.getItem('wierte_note');
-      if (saved) textarea.value = saved;
-    };
-
-    // Auto-save note
-    textarea.addEventListener('input', () => {
-      localStorage.setItem('wierte_note', textarea.value);
+    // Upload text file
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file && file.type === "text/plain") {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('notepad').value = e.target.result;
+        };
+        reader.readAsText(file);
+      } else {
+        alert("Please upload a valid .txt file.");
+      }
     });
 
-    function downloadNote() {
-      const text = textarea.value;
+    // Download text as .txt
+    function downloadText() {
+      const text = document.getElementById('notepad').value;
       const blob = new Blob([text], { type: 'text/plain' });
       const link = document.createElement('a');
+      link.download = 'notepad.txt';
       link.href = URL.createObjectURL(blob);
-      link.download = 'wierte-note.txt';
       link.click();
     }
 
-    function copyNote() {
-      textarea.select();
+    // Copy text to clipboard
+    function copyText() {
+      const textArea = document.getElementById('notepad');
+      textArea.select();
       document.execCommand('copy');
-      alert('Text copied to clipboard!');
+      alert("Text copied to clipboard!");
     }
 
-    function clearNote() {
-      if (confirm("Are you sure you want to clear the note?")) {
-        textarea.value = '';
-        localStorage.removeItem('wierte_note');
-      }
+    // Clear the notepad
+    function clearText() {
+      document.getElementById('notepad').value = '';
     }
   </script>
 
 </body>
 </html>
-
